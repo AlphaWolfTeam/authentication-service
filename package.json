@@ -1,0 +1,36 @@
+{
+  "name": "jaws-authentication",
+  "version": "0.0.1",
+  "description": "Jaws - Authentication Microservice",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --async-stack-traces ./dist/index.js",
+    "build": "tsc",
+    "dev:build": "tsc --watch",
+    "dev:start": "nodemon ./dist/index.js"
+  },
+  "author": "Alpha Team",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.8",
+    "@types/express-http-proxy": "^1.6.1",
+    "@types/http-proxy-middleware": "^0.19.3",
+    "@types/passport": "^1.0.4",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "env-var": "^6.3.0",
+    "express": "^4.17.1",
+    "express-http-proxy": "^1.6.2",
+    "express-session": "^1.17.1",
+    "helmet": "^4.1.0",
+    "http-proxy-middleware": "0.20.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.4.1",
+    "passport-shraga": "^1.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
