@@ -6,11 +6,11 @@ import * as logger from 'morgan';
 import * as session from 'express-session';
 import * as cors from 'cors'
 import * as cookieParser from 'cookie-parser'
-import * as proxy from 'http-proxy-middleware';
+// import * as proxy from 'http-proxy-middleware'
+const proxy = require('express-http-proxy');
 
 import { once } from 'events';
 import { errorMiddleware } from './error';
-import appRouter from './router';
 import AuthenticationHandler from '../authentication/handler';
 import AuthenticationRouter from '../authentication/router';
 import AuthenticationMiddleware from '../authentication/middleware';
@@ -18,9 +18,7 @@ import config from '../config'
 
 class Server {
     private app: express.Application;
-
     private http: http.Server;
-
     private port: number;
 
     constructor(port: number) {
@@ -28,7 +26,12 @@ class Server {
         this.port = port;
         this.configurationMiddleware();
         this.initAuthentication();
-        this.app.use('*', AuthenticationMiddleware.requireAuth, proxy({ target: 'http://localhost', changeOrigin: true }));
+        // this.app.get('/user', (req, res) => {
+        //     res.send(req.user)
+        // })
+
+        this.app.use('*', AuthenticationMiddleware.requireAuth, proxy(config.service.clientURL));
+
     }
 
     private setHeaders = (_req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -54,16 +57,11 @@ class Server {
 
     static createExpressApp() {
         const app = express();
-
         app.use(helmet());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
-
         app.use(logger('dev'));
-        app.use(appRouter);
-
         app.use(errorMiddleware);
-
         return app;
     }
 

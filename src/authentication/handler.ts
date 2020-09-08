@@ -3,35 +3,20 @@ import * as passport from 'passport';
 import { Strategy } from 'passport-shraga';
 import config from '../config';
 
-
 export default class AuthenticationHandler {
 
     static initialize(app: Application) {
         app.use(passport.initialize());
         app.use(passport.session());
-        
-        const shragaURL = config.auth.shragaURL;
-        const callbackURL = config.auth.callbackURL;
-        
-        passport.use(new Strategy({ shragaURL, callbackURL }, (profile: any, done: any) => {
-            console.log('test')
+
+        passport.serializeUser(AuthenticationHandler.serialize);
+        passport.deserializeUser(AuthenticationHandler.deserialize);
+
+        passport.use(new Strategy(config.auth, (profile: any, done: any) => {
             done(null, profile);
         }));
-        
-        // passport.serializeUser((user: any, cb: any) => {
-        //     console.log(user);
-        //     cb(undefined, user.id);
-        // });
 
-        // passport.deserializeUser((id, cb) => {
-        //     console.log(id);
-        //     try {
-        //         const user = { uid: '205707219' };
-        //         cb(undefined, user);
-        //     } catch (err) {
-        //         cb(err, null);
-        //     }
-        // });
+        return passport.initialize();
 
     }
 
@@ -41,5 +26,18 @@ export default class AuthenticationHandler {
             failureFlash: true
         });
     }
+
+    private static serialize(user: any, done: (err?: Error, user?: any) => void) {
+        done(undefined, user);
+    }
+
+    private static async deserialize(user: any, done: (err?: Error, user?: any) => void) {
+        try {
+            done(undefined, user);
+        } catch (err) {
+            done(err, null);
+        }
+    }
+
 
 }
