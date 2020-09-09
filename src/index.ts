@@ -1,4 +1,4 @@
-import Server from './express/server';
+import Server from './server';
 import config from './config';
 
 const { service } = config;

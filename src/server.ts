@@ -11,10 +11,10 @@ const proxy = require('express-http-proxy');
 
 import { once } from 'events';
 import { errorMiddleware } from './error';
-import AuthenticationHandler from '../authentication/handler';
-import AuthenticationRouter from '../authentication/router';
-import AuthenticationMiddleware from '../authentication/middleware';
-import config from '../config'
+import AuthenticationHandler from './authentication/handler';
+import AuthenticationRouter from './authentication/router';
+import AuthenticationMiddleware from './authentication/middleware';
+import config from './config';
 
 class Server {
     private app: express.Application;
@@ -26,11 +26,19 @@ class Server {
         this.port = port;
         this.configurationMiddleware();
         this.initAuthentication();
-        // this.app.get('/user', (req, res) => {
-        //     res.send(req.user)
-        // })
+        this.app.all('*', AuthenticationMiddleware.requireAuth, (req, _res, next) => {
+            console.log(req)
+            const { adfsId, name }: any = req.user;
+            req.body["currentUser"] = { adfsId, name };
+            next();
+        }, proxy(config.service.clientURL, {
+            proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
+                proxyReqOpts.headers["Content-Type"] = "application/json";
 
-        this.app.use('*', AuthenticationMiddleware.requireAuth, proxy(config.service.clientURL));
+                return proxyReqOpts;
+            }
+        }
+        ));
 
     }
 

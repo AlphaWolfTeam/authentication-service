@@ -1,6 +1,8 @@
-import { Application } from "express";
 import * as passport from 'passport';
+import * as jwt from 'jsonwebtoken';
+import { Application, Response, Request, NextFunction } from 'express';
 import { Strategy } from 'passport-shraga';
+
 import config from '../config';
 
 export default class AuthenticationHandler {
@@ -39,5 +41,12 @@ export default class AuthenticationHandler {
         }
     }
 
+    static async redirectUserToken(req: Request, res: Response, next: NextFunction) {
+        const { user } = req;
+        const userToken = jwt.sign(JSON.parse(JSON.stringify(user)), config.auth.secret);
+
+        res.cookie(config.auth.token, userToken);
+        next();
+    }
 
 }

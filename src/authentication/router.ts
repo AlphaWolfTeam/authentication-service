@@ -4,6 +4,6 @@ import AuthenticationHandler from './handler';
 const AuthenticationRouter = Router();
 
 AuthenticationRouter.get('/login', AuthenticationHandler.authenticate(), (req, res) => res.status(200).json(req.user));
-AuthenticationRouter.post('/callback', AuthenticationHandler.authenticate(), (_req, res) => res.redirect('/'));
+AuthenticationRouter.post('/callback', AuthenticationHandler.authenticate(), AuthenticationHandler.redirectUserToken, (_req, res) => res.redirect('/'));
 
 export default AuthenticationRouter
