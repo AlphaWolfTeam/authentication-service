@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node --async-stack-traces ./dist/index.js",
+    "dev": "npm run build && npm start",
     "build": "tsc",
     "dev:build": "tsc --watch",
     "dev:start": "nodemon ./dist/index.js"
@@ -32,6 +33,7 @@
     "passport-shraga": "^1.4.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "typescript": "^4.0.2"
   }
 }

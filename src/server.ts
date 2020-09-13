@@ -2,11 +2,9 @@ import * as http from 'http';
 import * as express from 'express';
 import * as helmet from 'helmet';
 import * as bodyParser from 'body-parser';
-import * as logger from 'morgan';
 import * as session from 'express-session';
 import * as cors from 'cors'
 import * as cookieParser from 'cookie-parser'
-// import * as proxy from 'http-proxy-middleware'
 const proxy = require('express-http-proxy');
 
 import { once } from 'events';
@@ -26,20 +24,14 @@ class Server {
         this.port = port;
         this.configurationMiddleware();
         this.initAuthentication();
-        this.app.all('*', AuthenticationMiddleware.requireAuth, (req, _res, next) => {
-            console.log(req)
-            const { adfsId, name }: any = req.user;
-            req.body["currentUser"] = { adfsId, name };
-            next();
-        }, proxy(config.service.clientURL, {
+
+        this.app.all('*', AuthenticationMiddleware.requireAuth, this.fwdUserDetailsMiddleware, proxy(config.service.clientURL, {
             proxyReqOptDecorator: (proxyReqOpts, _srcReq) => {
                 proxyReqOpts.headers["Content-Type"] = "application/json";
-
                 return proxyReqOpts;
             }
         }
         ));
-
     }
 
     private setHeaders = (_req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -68,7 +60,6 @@ class Server {
         app.use(helmet());
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
-        app.use(logger('dev'));
         app.use(errorMiddleware);
         return app;
     }
@@ -81,6 +72,12 @@ class Server {
     private initAuthentication() {
         AuthenticationHandler.initialize(this.app);
         this.app.use('/auth/', AuthenticationRouter);
+    }
+
+    private fwdUserDetailsMiddleware(req: any, _res: express.Response, next: express.NextFunction) {
+        const { adfsId, name } = req.user;
+        req.body["currentUser"] = { adfsId, name };
+        next();
     }
 
 }

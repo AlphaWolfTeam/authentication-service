@@ -26,8 +26,5 @@ export const errorMiddleware = (error: Error, _req: express.Request, res: expres
             message: error.message,
         });
     }
-
-    // TODO: add some logging
-
     next();
 };
