@@ -7,12 +7,12 @@ services:
     links: 
       - "permission-service-mock"
     environment:
-      PORT=80
-      AUTH_CALLBACK_URL=/auth/callback
-      AUTH_SECRET=J4W5_Sy5T3M
-      SHRAGA_URL=http://13.79.7.3
-      CLIENT_URL=http://permission-mock:3000
-      AUTH_TOKEN=kd-token
+      - PORT=80
+      - AUTH_CALLBACK_URL=/auth/callback
+      - AUTH_SECRET=J4W5_Sy5T3M
+      - SHRAGA_URL=http://13.79.7.3
+      - CLIENT_URL=http://permission-mock:3000
+      - AUTH_TOKEN=kd-token
     ports:
       - 80:80
   
